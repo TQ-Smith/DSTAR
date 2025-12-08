@@ -147,6 +147,10 @@ Block_t* get_next_block(
             }
         }
 
+        // If all sites are missing, drop locus.
+        if (alleleCounts[0][0] == 0 && alleleCounts[1][0] == 0 && alleleCounts[2][0] == 0 && alleleCounts[3][0] == 0)
+            continue;
+
         double ABBA = 0, BABA = 0, BAAA = 0, ABAA = 0, ADDA = 0, BDBD = 0, BBAA = 0;
         double p1 = 0, p2 = 0, p3 = 0, p4 = 0;
         if (alleleCounts[0][0] == 1 && alleleCounts[1][0] == 1 && alleleCounts[2][0] == 1 && alleleCounts[3][0] == 1) {
