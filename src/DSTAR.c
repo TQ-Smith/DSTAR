@@ -58,18 +58,20 @@ void bootstrap(BlockList_t* blockList, int replicates, bool standard) {
         stddev = sqrt(stddev);
 
         for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
-            temp -> p = 1 - pnorm((temp -> numeratorDSTAR / temp -> denominatorDSTAR) / stddev);
+            if (temp -> denominatorDSTAR > 0)
+                temp -> p = 1 - pnorm((temp -> numeratorDSTAR / temp -> denominatorDSTAR) / stddev);
         }
-        blockList -> p = 1- pnorm((blockList -> numeratorDSTAR / blockList -> denominatorDSTAR) / stddev);
+        blockList -> p = 1 - pnorm((blockList -> numeratorDSTAR / blockList -> denominatorDSTAR) / stddev);
     } else {
         int numGreater;
         for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
             numGreater = 0;
-            for (int i = 0; i < replicates; i++) {
+            for (int i = 0; temp -> denominatorDSTAR > 0 && i < replicates; i++) {
                 if (temp -> numeratorDSTAR / temp -> denominatorDSTAR > dis[i])
                     numGreater++;
             }
-            temp -> p = 1 - 2 * fabs(0.5 - numGreater / (double) replicates);
+            if (temp -> denominatorDSTAR > 0)
+                temp -> p = 1 - 2 * fabs(0.5 - numGreater / (double) replicates);
         }
         numGreater = 0;
         for (int i = 0; i < replicates; i++) {

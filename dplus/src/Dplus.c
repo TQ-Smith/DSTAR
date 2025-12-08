@@ -66,24 +66,28 @@ void bootstrap(BlockList_t* blockList, int replicates, bool standard) {
         stddevDplus = sqrt(stddevDplus);
 
         for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
-            temp -> dP = 1 - pnorm((temp -> dNum / temp -> dDenom) / stddevD);
-            temp -> dplusP = 1 - pnorm((temp -> dplusNum / temp -> dplusDenom) / stddevDplus);
+            if (temp -> dDenom > 0)
+                temp -> dP = 1 - pnorm((temp -> dNum / temp -> dDenom) / stddevD);
+            if (temp -> dplusDenom > 0)
+                temp -> dplusP = 1 - pnorm((temp -> dplusNum / temp -> dplusDenom) / stddevDplus);
         }
-        blockList -> dP = 1- pnorm((blockList -> dNum / blockList -> dDenom) / stddevD);
-        blockList -> dplusP = 1- pnorm((blockList -> dplusNum / blockList -> dplusDenom) / stddevDplus);
+        blockList -> dP = 1 - pnorm((blockList -> dNum / blockList -> dDenom) / stddevD);
+        blockList -> dplusP = 1 - pnorm((blockList -> dplusNum / blockList -> dplusDenom) / stddevDplus);
     } else {
         int dNumGreater, dplusNumGreater;
         for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
             dNumGreater = 0;
             dplusNumGreater = 0;
-            for (int i = 0; i < replicates; i++) {
-                if (temp -> dNum / temp -> dDenom > dDis[i])
+            for (int i = 0; temp -> dDenom > 0 && i < replicates; i++) {
+                if (temp -> dDenom > 0 && temp -> dNum / temp -> dDenom > dDis[i])
                     dNumGreater++;
-                if (temp -> dplusNum / temp -> dplusDenom > dplusDis[i])
+                if (temp -> dDenom > 0 && temp -> dplusNum / temp -> dplusDenom > dplusDis[i])
                     dplusNumGreater++;
             }
-            temp -> dP = 1 - 2 * fabs(0.5 - dNumGreater / (double) replicates);
-            temp -> dplusP = 1 - 2 * fabs(0.5 - dplusNumGreater / (double) replicates);
+            if (temp -> dDenom > 0)
+                temp -> dP = 1 - 2 * fabs(0.5 - dNumGreater / (double) replicates);
+            if (temp -> dplusDenom > 0)
+                temp -> dplusP = 1 - 2 * fabs(0.5 - dplusNumGreater / (double) replicates);
         }
         dNumGreater = 0;
         dplusNumGreater = 0;

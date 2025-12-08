@@ -15,6 +15,8 @@ Block_t* init_block(char* chrom, int startCoordinate) {
     block -> startCoordinate = startCoordinate;
     block -> numHaps = 0;
     block -> next = NULL;
+    block -> dP = -1;
+    block -> dplusP = -1;
     return block;
 }
 
