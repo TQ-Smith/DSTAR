@@ -18,8 +18,8 @@ typedef struct {
     int blockSize;
     double MAF;
     double missingAF;
-    int replicates;
-    bool standard;
+    // int replicates;
+    // bool standard;
     char* inputFileName;
     char* samplesToPopFileName;
     char* popList;

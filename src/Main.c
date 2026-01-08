@@ -23,7 +23,7 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
     for (int i = 0; i < strlen(popList); i++)
         if (popList[i] == ',')
             n++;
-    if (n != 2 && n != 3)
+    if (n != 2)
         return NULL;
 
     // The three population names.
@@ -31,7 +31,6 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
     char* first = NULL;
     char* second = NULL;
     char* third = NULL;
-    char* fourth = NULL;
 
     // Get the three population names.
     tok = strtok(popList, ",");
@@ -40,10 +39,6 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
     second = strdup(tok);
     tok = strtok(NULL, ",");
     third = strdup(tok);
-    if (n == 3) {
-        tok = strtok(NULL, ",");
-        fourth = strdup(tok);
-    }
 
     FILE* samplesToPopFile = fopen(samplesToPopFileName, "r");
 
@@ -67,7 +62,7 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
         // If invalid formatting, free all memory and exit.
         if (numFields != 2) {
             free(line); free(sampleName); free(popName);
-            free(first); free(second); free(third); if (fourth) free(fourth);
+            free(first); free(second); free(third);
             fclose(samplesToPopFile);
             for (k = 0; k < kh_end(h); k++)
                 if (kh_exist(h, k))
@@ -81,7 +76,6 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
         if (strcmp(popName, first) == 0)  {  popLabel = 1;  }
         if (strcmp(popName, second) == 0) {  popLabel = 2;  }
         if (strcmp(popName, third) == 0)  {  popLabel = 3;  }
-        if (fourth != NULL && strcmp(popName, fourth) == 0)  {  popLabel = 4;  }
 
         // Insert into hash table.
         k = kh_put(str, h, sampleName, &absent);
@@ -104,7 +98,7 @@ int* labelSamples(char** sampleNames, int numSamples, char* samplesToPopFileName
     }
 
     // Free used memory.
-    free(first); free(second); free(third); if (fourth) free(fourth);
+    free(first); free(second); free(third);
     fclose(samplesToPopFile);
     for (k = 0; k < kh_end(h); k++)
         if (kh_exist(h, k))
@@ -146,8 +140,8 @@ int main (int argc, char *argv[]) {
     // fprintf(stderr, "Finished Blocking Genome ...\n");
 
     // Execute bootstrap if user entered number of replicates.
-    if (config -> replicates > 0)
-        bootstrap(blocks, config -> replicates, config -> standard); 
+    // if (config -> replicates > 0)
+    //    bootstrap(blocks, config -> replicates, config -> standard); 
 
     // Default is to write to stdout.
     FILE* output = stdout;
@@ -161,10 +155,13 @@ int main (int argc, char *argv[]) {
     // Output values.
     // fprintf(stderr, "\nPrinting Output ...\n\n");
     fprintf(output, "#%s\n", config -> cmd);
-    fprintf(output, "#Block_Num\tBlock_Num_on_Chr\tChromosome\tStart_Position\tEnd_Position\tNum_Loci\talpha\tDSTAR\tPValue\n");
+    // fprintf(output, "#Block_Num\tBlock_Num_on_Chr\tChromosome\tStart_Position\tEnd_Position\tNum_Loci\talpha\tDSTAR\tPValue\n");
+    fprintf(output, "#Block_Num\tBlock_Num_on_Chr\tChromosome\tStart_Position\tEnd_Position\tNum_Loci\talpha\tDSTAR\n");
     for (Block_t* temp = blocks -> head; temp != NULL; temp = temp -> next)
-        fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", temp -> blockNum, temp -> blockNumOnChrom, temp -> chrom, temp -> startCoordinate, temp -> endCoordinate, temp -> numLoci, temp -> denominatorDSTAR, temp -> numeratorDSTAR / temp -> denominatorDSTAR, temp -> p);
-    fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", 0, 0, "Global", 0, 0, blocks -> numLoci, blocks -> denominatorDSTAR, blocks -> numeratorDSTAR / blocks -> denominatorDSTAR, blocks -> p);
+        fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\n", temp -> blockNum, temp -> blockNumOnChrom, temp -> chrom, temp -> startCoordinate, temp -> endCoordinate, temp -> numLoci, temp -> denominatorDSTAR, temp -> numeratorDSTAR / temp -> denominatorDSTAR);
+       // fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", temp -> blockNum, temp -> blockNumOnChrom, temp -> chrom, temp -> startCoordinate, temp -> endCoordinate, temp -> numLoci, temp -> denominatorDSTAR, temp -> numeratorDSTAR / temp -> denominatorDSTAR, temp -> p);
+    fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\n", 0, 0, "Global", 0, 0, blocks -> numLoci, blocks -> denominatorDSTAR, blocks -> numeratorDSTAR / blocks -> denominatorDSTAR);
+    // fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", 0, 0, "Global", 0, 0, blocks -> numLoci, blocks -> denominatorDSTAR, blocks -> numeratorDSTAR / blocks -> denominatorDSTAR, blocks -> p);
     // fprintf(stderr, "Finished Printing Output ...\n\n");
     // fprintf(stderr, "Done!\n");
 

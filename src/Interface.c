@@ -16,10 +16,10 @@ void print_help() {
     fprintf(stderr, "Written by T. Quinn Smith\n");
     fprintf(stderr, "Principal Investigator: Zachary A. Szpiech\n");
     fprintf(stderr, "The Pennsylvania State University\n\n");
-    fprintf(stderr, "Usage: dstar [options] <inFile.vcf.gz> <sampleToPop.tsv> <pop1>,<pop2>,<pop3>[,<pop4>]\n\n");
+    fprintf(stderr, "Usage: dstar [options] <inFile.vcf.gz> <sampleToPop.tsv> <pop1>,<pop2>,<pop3>\n\n");
     fprintf(stderr, "<inFile.vcf.gz>                    The input VCF file.\n");
     fprintf(stderr, "<sampleToPop.tsv>                  Tab seperate file associating each sample with a population.\n");
-    fprintf(stderr, "<pop1>,<pop2>,<pop3>[,<pop4>]      Names of the populations to test.\n\n");
+    fprintf(stderr, "<pop1>,<pop2>,<pop3>               Names of the populations to test.\n\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Prints to stdout by default. Progress printed to stderr.\n");
     fprintf(stderr, "\n");
@@ -32,9 +32,9 @@ void print_help() {
     fprintf(stderr, "                                           Default 0; monomorphic sites are dropped.\n");
     fprintf(stderr, "    -n,--missingAF         DOUBLE      Sites with proportion of missing genotype >= DOUBLE are dropped.\n");
     fprintf(stderr, "                                           Default 1.\n");
-    fprintf(stderr, "    -r,--replicates        INT         Report empirical p-values from bootstrapped distribution with INT number\n");
-    fprintf(stderr, "                                           of replicates. Default 1,000. To not run bootstrap, set to 0.\n");
-    fprintf(stderr, "    -z                                 Calculates p-values according to Z-distribution.\n");
+    // fprintf(stderr, "    -r,--replicates        INT         Report empirical p-values from bootstrapped distribution with INT number\n");
+    // fprintf(stderr, "                                           of replicates. Default 1,000. To not run bootstrap, set to 0.\n");
+    // fprintf(stderr, "    -z                                 Calculates p-values according to Z-distribution.\n");
     fprintf(stderr, "    -o,--out               STR         The output file basename.\n");
     fprintf(stderr, "                                           Default stdout.\n");
     fprintf(stderr, "\n");
@@ -46,7 +46,7 @@ static ko_longopt_t long_options[] = {
     {"blockSize",       ko_required_argument,         'b'},
     {"MAF",             ko_required_argument,         'm'},
     {"missingAF",       ko_required_argument,         'n'},
-    {"replicates",      ko_required_argument,         'r'},
+    // {"replicates",      ko_required_argument,         'r'},
     {"standard",        ko_no_argument,               'z'},
     {"out",             ko_required_argument,         'o'},
     {0, 0, 0}
@@ -54,10 +54,10 @@ static ko_longopt_t long_options[] = {
 
 // Check that user supplied values are valid.
 int check_configuration(DSTARConfig_t* config) {
-    if (config -> replicates < 0) {
-        fprintf(stderr, "Number of replicates must be and integer >= 1. Exiting!\n");
-        return -1;
-    }
+    //if (config -> replicates < 0) {
+    //    fprintf(stderr, "Number of replicates must be and integer >= 1. Exiting!\n");
+    //    return -1;
+    //}
     if (config -> blockSize < 1) {
         fprintf(stderr, "--blockSize must be given an integer >= 1. Exiting!\n");
         return -1;
@@ -83,7 +83,8 @@ int check_configuration(DSTARConfig_t* config) {
 
 DSTARConfig_t* init_dstar_config(int argc, char* argv[]) {
 
-    const char *opt_str = "zg:b:m:n:r:o:";
+    // const char *opt_str = "zg:b:m:n:r:o:";
+    const char *opt_str = "g:b:m:n:o:";
     ketopt_t options = KETOPT_INIT;
     int c;
 
@@ -100,11 +101,11 @@ DSTARConfig_t* init_dstar_config(int argc, char* argv[]) {
     config -> blockSize = 2000000;
     config -> MAF = 0;
     config -> missingAF = 1;
-    config -> replicates = 1000;
+    // config -> replicates = 1000;
     config -> inputFileName = NULL;
     config -> samplesToPopFileName = NULL;
     config -> popList = NULL;
-    config -> standard = false;
+    // config -> standard = false;
     config -> cmd = NULL;
     config -> outBaseName = NULL;
     
@@ -116,9 +117,9 @@ DSTARConfig_t* init_dstar_config(int argc, char* argv[]) {
             case 'b': config -> blockSize = (int) strtol(options.arg, (char**) NULL, 10); break;
             case 'm': config -> MAF = (double) strtod(options.arg, (char**) NULL); break;
             case 'n': config -> missingAF = (double) strtod(options.arg, (char**) NULL); break;
-            case 'r': config -> replicates = (int) strtol(options.arg, (char**) NULL, 10); break;
+            // case 'r': config -> replicates = (int) strtol(options.arg, (char**) NULL, 10); break;
             case 'o': config -> outBaseName = strdup(options.arg); break;
-            case 'z': config -> standard = true; break;
+            // case 'z': config -> standard = true; break;
         }
 	}
 
@@ -147,7 +148,7 @@ DSTARConfig_t* init_dstar_config(int argc, char* argv[]) {
     ksprintf(cmd, "--blockSize %d ", config -> blockSize);
     ksprintf(cmd, "--MAF %lf ", config -> MAF);
     ksprintf(cmd, "--missingAF %lf ", config -> missingAF);
-    ksprintf(cmd, "--replicates %d ", config -> replicates);
+    // ksprintf(cmd, "--replicates %d ", config -> replicates);
     ksprintf(cmd, "%s ", config -> inputFileName);
     ksprintf(cmd, "%s ", config -> samplesToPopFileName);
     ksprintf(cmd, "%s", config -> popList);
