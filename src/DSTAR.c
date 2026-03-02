@@ -169,7 +169,6 @@ Block_t* get_next_block(
     int** alleleCounts,
     Locus* loci
 ) {
-
     if (isEOF(vcfFile))
         return NULL;
 
@@ -203,22 +202,21 @@ Block_t* get_next_block(
                 }
             }
         }
-
         // If sample size was not set by the user, then we take the min of the three/four populations.
         int minNumLineages = (int) fmin(alleleCounts[0][0], fmin(alleleCounts[1][0], alleleCounts[2][0]));
         if (sampleSize == -1)
             sampleSize = minNumLineages;
-        // Otherwise, if it was set and we do not have the appropriate number of lineages, we skip the block.
+        // Otherwise, if it was set and we do not have the appropriate number of lineages, we skip the locus.
         else if (sampleSize > minNumLineages)
             continue;
 
         // Use alleleCounts for rarefaction calculations.
         locus_dstar(block, alleleCounts, numAlleles, sampleSize);
     }
+    
     block -> endCoordinate = coord;
 
     if (chrom) free(chrom);
-
     return block;
 
 }
@@ -234,7 +232,6 @@ BlockList_t* dstar(VCFLocusParser_t* vcfFile, int* samplesToLabel, int sampleSiz
     alleleCounts[0] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
     alleleCounts[1] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
     alleleCounts[2] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
-
     // Holds loci for each record.
     Locus* loci = (Locus*) calloc(vcfFile -> numSamples, sizeof(Locus));
 
@@ -255,15 +252,16 @@ BlockList_t* dstar(VCFLocusParser_t* vcfFile, int* samplesToLabel, int sampleSiz
         append_block(globalList, temp);
 
         // Accumulate genome-wide DSTAR.
-        globalList -> pi13 += temp -> pi13;
-        globalList -> pi23 += temp -> pi23;
-        globalList -> numeratorDSTAR += temp -> numeratorDSTAR;
-        globalList -> denominatorDSTAR += temp -> denominatorDSTAR;
-
-        globalList -> numLoci += temp -> numLoci;
+        if (temp -> denominatorDSTAR > EPS) {
+            globalList -> pi13 += temp -> pi13;
+            globalList -> pi23 += temp -> pi23;
+            globalList -> numeratorDSTAR += temp -> numeratorDSTAR;
+            globalList -> denominatorDSTAR += temp -> denominatorDSTAR;
+            globalList -> numLoci += temp -> numLoci;
+        }
     }
 
-    free(alleleCounts[0]); free(alleleCounts[1]); free(alleleCounts[2]); free(alleleCounts[3]);
+    free(alleleCounts[0]); free(alleleCounts[1]); free(alleleCounts[2]);
     free(alleleCounts);
     free(loci);
 
