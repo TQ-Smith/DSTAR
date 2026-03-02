@@ -187,10 +187,10 @@ Block_t* get_next_block(
         isOnSameChrom = !isEOF(vcfFile) && strcmp(chrom, vcfFile -> nextChrom) == 0;
         
         // Fill alleleCounts.
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
             for (int j = 0; j <= numAlleles; j++)
                 alleleCounts[i][j] = 0;
-
+            
         for (int i = 0; i < vcfFile -> numSamples; i++) {
             if (samplesToLabel[i] != -1) {
                 if (((int) LEFT_ALLELE(loci[i])) != numAlleles) {
@@ -230,11 +230,10 @@ BlockList_t* dstar(VCFLocusParser_t* vcfFile, int* samplesToLabel, int sampleSiz
 
     // Count the number of haplotyes in each population.
     //  The first row holds the global counts.
-    int** alleleCounts = (int**) calloc(4, sizeof(int*));
+    int** alleleCounts = (int**) calloc(3, sizeof(int*));
     alleleCounts[0] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
     alleleCounts[1] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
     alleleCounts[2] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
-    alleleCounts[3] = (int*) calloc(2 * vcfFile -> numSamples + 1, sizeof(int));
 
     // Holds loci for each record.
     Locus* loci = (Locus*) calloc(vcfFile -> numSamples, sizeof(Locus));
