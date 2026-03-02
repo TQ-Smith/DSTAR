@@ -6,7 +6,6 @@
 // Purpose: Parse a VCF file for samples' genotypes at each record.
 
 #include "VCFLocusParser.h"
-
 // I am not in love with how I wrote this, but it is sufficient for now.
 bool seek(VCFLocusParser_t* parser) {
 
