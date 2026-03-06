@@ -252,13 +252,11 @@ BlockList_t* dstar(VCFLocusParser_t* vcfFile, int* samplesToLabel, int sampleSiz
         append_block(globalList, temp);
 
         // Accumulate genome-wide DSTAR.
-        if (temp -> denominatorDSTAR > EPS) {
-            globalList -> pi13 += temp -> pi13;
-            globalList -> pi23 += temp -> pi23;
-            globalList -> numeratorDSTAR += temp -> numeratorDSTAR;
-            globalList -> denominatorDSTAR += temp -> denominatorDSTAR;
-            globalList -> numLoci += temp -> numLoci;
-        }
+        globalList -> pi13 += temp -> pi13;
+        globalList -> pi23 += temp -> pi23;
+        globalList -> numeratorDSTAR += temp -> numeratorDSTAR;
+        globalList -> denominatorDSTAR += temp -> denominatorDSTAR;
+        globalList -> numLoci += temp -> numLoci;
     }
 
     free(alleleCounts[0]); free(alleleCounts[1]); free(alleleCounts[2]);
