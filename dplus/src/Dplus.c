@@ -168,6 +168,7 @@ Block_t* get_next_block(
                 ABAA += 1;
             if (alleleCounts[0][2] == 1 && alleleCounts[1][2] == 1 && alleleCounts[2][1] == 1 && alleleCounts[3][1] == 1)
                 BBAA += 1;
+            block -> numHaps++;
         } else {
             p1 = alleleCounts[0][2] / (double) alleleCounts[0][0];
             p2 = alleleCounts[1][2] / (double) alleleCounts[1][0];
@@ -182,6 +183,7 @@ Block_t* get_next_block(
             ADDA = (1 - p1) * pd * pd * (1 - p4);
             BDBD = p1 * (1 - pd) * pd * (1 - p4);
             BBAA = p1 * p2 * (1 - p3) * (1 - p4);
+            block -> numHaps++;
         }
 
         block -> dNum += (ABBA - BABA);
@@ -198,7 +200,6 @@ Block_t* get_next_block(
         int total = alleleCounts[0][0] + alleleCounts[1][0] + alleleCounts[2][0];
         block -> nucleotideDiversity += 2 * (alleleCounts[0][1] + alleleCounts[1][1] + alleleCounts[2][1]) * (alleleCounts[0][2] + alleleCounts[1][2] + alleleCounts[2][2]) / (total * (total -1));
 
-        block -> numHaps++;
     }
     block -> endCoordinate = coord;
 
