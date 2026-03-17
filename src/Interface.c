@@ -32,10 +32,9 @@ void print_help() {
     fprintf(stderr, "                                           Default 0; monomorphic sites are dropped.\n");
     fprintf(stderr, "    -n,--missingAF         DOUBLE      Sites with proportion of missing genotype >= DOUBLE are dropped.\n");
     fprintf(stderr, "                                           Default 1.\n");
-    fprintf(stderr, "    -r,--replicates        INT         Report empirical p-values from bootstrapped distribution with INT number\n");
-    fprintf(stderr, "                                           of replicates. Default weighted-jackknife.\n");
-    fprintf(stderr, "    -z,--standard                      Calculates p-values according to Z-distribution instead of empirical\n");
-    fprintf(stderr, "                                           if -r is set.\n");
+    fprintf(stderr, "    -r,--replicates        INT         Nonparametric bootstrap with INT number of replicates.\n");
+    fprintf(stderr, "                                           Default weighted-jackknife.\n");
+    fprintf(stderr, "    -z,--standard                      Calculates parametric bootstrap wth Z-distribution if -r is set.\n");
     fprintf(stderr, "    -o,--out               STR         The output file basename.\n");
     fprintf(stderr, "                                           Default stdout.\n");
     fprintf(stderr, "\n");
