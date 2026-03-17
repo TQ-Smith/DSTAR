@@ -140,8 +140,10 @@ int main (int argc, char *argv[]) {
     // fprintf(stderr, "Finished Blocking Genome ...\n");
 
     // Execute bootstrap if user entered number of replicates.
-    // if (config -> replicates > 0)
-    //    bootstrap(blocks, config -> replicates, config -> standard); 
+    if (config -> replicates > 0)
+        bootstrap(blocks, config -> replicates, config -> standard);
+    else 
+        weighted_block_jackknife(blocks);
 
     // Default is to write to stdout.
     FILE* output = stdout;
@@ -153,17 +155,12 @@ int main (int argc, char *argv[]) {
     }
 
     // Output values.
-    // fprintf(stderr, "\nPrinting Output ...\n\n");
     fprintf(output, "#%s\n", config -> cmd);
-    // fprintf(output, "#Block_Num\tBlock_Num_on_Chr\tChromosome\tStart_Position\tEnd_Position\tNum_Loci\talpha\tDSTAR\tPValue\n");
+    fprintf(output, "#pvalue=%lf\n", blocks -> p);
     fprintf(output, "#Block_Num\tBlock_Num_on_Chr\tChromosome\tStart_Position\tEnd_Position\tNum_Loci\talpha\tDSTAR\n");
     for (Block_t* temp = blocks -> head; temp != NULL; temp = temp -> next)
         fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\n", temp -> blockNum, temp -> blockNumOnChrom, temp -> chrom, temp -> startCoordinate, temp -> endCoordinate, temp -> numLoci, temp -> denominatorDSTAR, temp -> numeratorDSTAR / temp -> denominatorDSTAR);
-       // fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", temp -> blockNum, temp -> blockNumOnChrom, temp -> chrom, temp -> startCoordinate, temp -> endCoordinate, temp -> numLoci, temp -> denominatorDSTAR, temp -> numeratorDSTAR / temp -> denominatorDSTAR, temp -> p);
     fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\n", 0, 0, "Global", 0, 0, blocks -> numLoci, blocks -> denominatorDSTAR, blocks -> numeratorDSTAR / blocks -> denominatorDSTAR);
-    // fprintf(output, "%d\t%d\t%s\t%d\t%d\t%d\t%lf\t%lf\t%lf\n", 0, 0, "Global", 0, 0, blocks -> numLoci, blocks -> denominatorDSTAR, blocks -> numeratorDSTAR / blocks -> denominatorDSTAR, blocks -> p);
-    // fprintf(stderr, "Finished Printing Output ...\n\n");
-    // fprintf(stderr, "Done!\n");
 
     // Free all used memory.
     if (config -> outBaseName != NULL)

@@ -20,7 +20,10 @@
 // Returns: BlockList_t*, the list of genome blocks.
 BlockList_t* dstar(VCFLocusParser_t* vcfFile, int* samplesToLabel, int sampleSize, int blockSize);
 
-// Compute the bootstrapped pvalues for global and all blocks.
+// Compute the bootstrapped pvalues for global.
 void bootstrap(BlockList_t* blockList, int replicates, bool standard);
+
+// Compute the jackknifed pvalues for global.
+void weighted_block_jackknife(BlockList_t* blocks);
 
 #endif

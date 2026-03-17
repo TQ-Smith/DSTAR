@@ -56,24 +56,10 @@ void bootstrap(BlockList_t* blockList, int replicates, bool standard) {
             stddev += (dis[i] - mean) * (dis[i] - mean);
         stddev /= (replicates - 1);
         stddev = sqrt(stddev);
-
-        for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
-            if (temp -> denominatorDSTAR > 0)
-                temp -> p = 1 - pnorm((temp -> numeratorDSTAR / temp -> denominatorDSTAR) / stddev);
-        }
+        
         blockList -> p = 1 - pnorm((blockList -> numeratorDSTAR / blockList -> denominatorDSTAR) / stddev);
     } else {
-        int numGreater;
-        for (Block_t* temp = blockList -> head; temp != NULL; temp = temp -> next) {
-            numGreater = 0;
-            for (int i = 0; temp -> denominatorDSTAR > 0 && i < replicates; i++) {
-                if (temp -> numeratorDSTAR / temp -> denominatorDSTAR > dis[i])
-                    numGreater++;
-            }
-            if (temp -> denominatorDSTAR > 0)
-                temp -> p = 1 - 2 * fabs(0.5 - numGreater / (double) replicates);
-        }
-        numGreater = 0;
+        int numGreater = 0;
         for (int i = 0; i < replicates; i++) {
             if (blockList -> numeratorDSTAR / blockList -> denominatorDSTAR > dis[i])
                 numGreater++;
@@ -86,7 +72,7 @@ void bootstrap(BlockList_t* blockList, int replicates, bool standard) {
     gsl_rng_free(r);
 }
 
-/*
+
 // P-values from jackknife with mean 0 and given std. dev. 
 double get_p_val(double d, double std) {
     double Z = fabs(d / std);
@@ -98,12 +84,12 @@ void weighted_block_jackknife(BlockList_t* blocks) {
     
     // Calculate the jackknife estimator.
     double sum = 0;
-    int n = blocks -> numHaps;
+    int n = blocks -> numLoci;
     for (Block_t* temp = blocks -> head; temp != NULL; temp = temp -> next) {
-        double dropped = (blocks -> numeratorPrivateD - temp -> numeratorPrivateD) /  (blocks -> denominatorPrivateD - temp -> denominatorPrivateD);
-        sum += (n - temp -> numHaps) * dropped / (double) n;
+        double dropped = (blocks -> numeratorDSTAR - temp -> numeratorDSTAR) /  (blocks -> denominatorDSTAR - temp -> denominatorDSTAR);
+        sum += (n - temp -> numLoci) * dropped / (double) n;
     }
-    double est = blocks -> numeratorPrivateD / (double) blocks -> denominatorPrivateD;
+    double est = blocks -> numeratorDSTAR / (double) blocks -> denominatorDSTAR;
 
     // Our jackknife estimator.
     double jack = blocks -> numBlocks * est - sum;
@@ -111,21 +97,17 @@ void weighted_block_jackknife(BlockList_t* blocks) {
     // Calculate the standard error.
     sum = 0;
     for (Block_t* temp = blocks -> head; temp != NULL; temp = temp -> next) {
-        double h = n / (double) temp -> numHaps;
-        double dropped = (blocks -> numeratorPrivateD - temp -> numeratorPrivateD) / (double) (blocks -> denominatorPrivateD - temp -> denominatorPrivateD);
+        double h = n / (double) temp -> numLoci;
+        double dropped = (blocks -> numeratorDSTAR - temp -> numeratorDSTAR) / (double) (blocks -> denominatorDSTAR - temp -> denominatorDSTAR);
         double pseudo = h * est - (h - 1) * dropped;
         sum += (pseudo - jack) * (pseudo - jack) / (h - 1);
     }
     blocks -> stder = sqrt(sum / (double) blocks -> numBlocks);
 
-    // Calculate our pvalue for every block and global.
+    // Calculate our pvalue for global.
     blocks -> p = get_p_val(est, blocks -> stder);
-    for (Block_t* temp = blocks -> head; temp != NULL; temp = temp -> next) {
-        est = temp -> numeratorPrivateD / (double) temp -> denominatorPrivateD;
-        temp -> p = get_p_val(est, blocks -> stder);
-    }
 }
-*/
+
 
 // From Szpiech et al 2008.
 double Q_gji(int N_j, int N_ji, int g) {
