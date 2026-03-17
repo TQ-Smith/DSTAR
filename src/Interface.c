@@ -101,7 +101,7 @@ DSTARConfig_t* init_dstar_config(int argc, char* argv[]) {
     config -> blockSize = 2000000;
     config -> MAF = 0;
     config -> missingAF = 1;
-    config -> replicates = 1000;
+    config -> replicates = 0;
     config -> inputFileName = NULL;
     config -> samplesToPopFileName = NULL;
     config -> popList = NULL;
