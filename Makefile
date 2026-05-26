@@ -6,8 +6,8 @@
 # Purpose: Build DSTAR.
 
 CC?=gcc
-CFLAGS = -c -Wall -g -I lib
-LFLAGS = -g -o
+CFLAGS?=-c -Wall -g -I lib
+LFLAGS?=-g -o
 
 bin/dstar: lib src
 	mkdir -p bin
