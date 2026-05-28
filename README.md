@@ -8,7 +8,7 @@ The manual can be found at [https://github.com/TQ-Smith/DSTAR/wiki].
 
 ```
 conda install bioconda::dstar
-dstar -h
+dstar
 ```
 
 ## License
