@@ -33,8 +33,8 @@ void print_help() {
     fprintf(stderr, "    -n,--missingAF         DOUBLE      Sites with proportion of missing genotype >= DOUBLE are dropped.\n");
     fprintf(stderr, "                                           Default 1.\n");
     fprintf(stderr, "    -r,--replicates        INT         Nonparametric bootstrap with INT number of replicates.\n");
-    fprintf(stderr, "                                           Default weighted-jackknife.\n");
-    fprintf(stderr, "    -z,--standard                      Calculates parametric bootstrap wth Z-distribution when -r is set.\n");
+    fprintf(stderr, "                                           Default 0. Weighted jackknife performed.\n");
+    fprintf(stderr, "    -z,--standard                      Calculates parametric bootstrap with Z-distribution when -r is set.\n");
     fprintf(stderr, "    -o,--out               STR         The output file basename.\n");
     fprintf(stderr, "                                           Default stdout.\n");
     fprintf(stderr, "\n");
