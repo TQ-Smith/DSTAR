@@ -135,23 +135,45 @@ Block_t* get_next_block(
 
         double ABBA = 0, BABA = 0, BAAA = 0, ABAA = 0, ADDA = 0, BDBD = 0, BBAA = 0;
         double p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+        // With a single sample, we establish the ancestral allele using P4.
         if (alleleCounts[0][0] == 1 && alleleCounts[1][0] == 1 && alleleCounts[2][0] == 1 && alleleCounts[3][0] == 1) {
-            if (alleleCounts[0][1] == 1 && alleleCounts[1][2] == 1 && alleleCounts[2][2] == 1 && alleleCounts[3][1] == 1) {
+            int ancestral;
+            if (alleleCounts[3][1] == 1)
+                ancestral = 0;
+            else
+                ancestral = 1;
+            int P1;
+            if (alleleCounts[0][1] == 1)
+                P1 = 0;
+            else 
+                P1 = 1;
+            int P2;
+            if (alleleCounts[1][1] == 1)
+                P2 = 0;
+            else 
+                P2 = 1;
+            int P3;
+            if (alleleCounts[2][1] == 1)
+                P3 = 0;
+            else 
+                P3 = 1;
+            if (P1 == ancestral && P2 != ancestral && P3 != ancestral) {
                 ABBA += 1;
             }
-            if (alleleCounts[0][2] == 1 && alleleCounts[1][1] == 1 && alleleCounts[2][2] == 1 && alleleCounts[3][1] == 1) {
+            if (P1 != ancestral && P2 == ancestral && P3 != ancestral) {
                 BABA += 1;
             }
-            if (alleleCounts[0][2] == 1 && alleleCounts[1][1] == 1 && alleleCounts[2][1] == 1 && alleleCounts[3][1] == 1) {
+            if (P1 != ancestral && P2 == ancestral && P3 == ancestral) {
                 BAAA += 1;
             }
-            if (alleleCounts[0][1] == 1 && alleleCounts[1][2] == 1 && alleleCounts[2][1] == 1 && alleleCounts[3][1] == 1) {
+            if (P1 == ancestral && P2 != ancestral && P3 == ancestral) {
                 ABAA += 1;
             }
-            if (alleleCounts[0][2] == 1 && alleleCounts[1][2] == 1 && alleleCounts[2][1] == 1 && alleleCounts[3][1] == 1) {
+            if (P1 != ancestral && P2 != ancestral && P3 == ancestral) {
                 BBAA += 1;
             }
             block -> numHaps++;
+        // With multiple samples, we use frequencies.
         } else {
             p1 = alleleCounts[0][2] / (double) alleleCounts[0][0];
             p2 = alleleCounts[1][2] / (double) alleleCounts[1][0];
