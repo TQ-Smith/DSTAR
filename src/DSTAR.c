@@ -61,7 +61,7 @@ void bootstrap(BlockList_t* blockList, int replicates, bool standard) {
     } else {
         int numGreater = 0;
         for (int i = 0; i < replicates; i++) {
-            if (fabs(blockList -> numeratorDSTAR / blockList -> denominatorDSTAR) >= fabs(dis[i]))
+            if (fabs(dis[i]) >= fabs(blockList -> numeratorDSTAR / blockList -> denominatorDSTAR))
                 numGreater++;
         }
         blockList -> p = numGreater / (double) replicates;
