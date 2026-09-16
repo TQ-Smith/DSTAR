@@ -71,13 +71,10 @@ zcat < merged.vcf.gz | awk 'BEGIN{OFS="\t"}
 gzip -d -c outgroup_merged.vcf.gz | bgzip -c > outgroup_merged.vcf.bgz
 tabix outgroup_merged.vcf.bgz
 bcftools view -S subsample_2_2.txt outgroup_merged.vcf.bgz | gzip > subsample_2_2.vcf.gz
-bcftools view -S subsample_4_4_2.txt outgroup_merged.vcf.bgz | gzip > subsample_4_4_2.vcf.gz
 
 mkdir -p merged
 mkdir -p subsample_2_2
-mkdir -p subsample_4_4_2
 
 mv outgroup_merged.vcf.gz* merged
 mv subsample_2_2.vcf.gz subsample_2_2
-mv subsample_4_4_2.vcf.gz subsample_4_4_2
 mv *.vcf.gz merged
